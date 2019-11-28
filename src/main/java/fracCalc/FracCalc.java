@@ -16,6 +16,7 @@ public class FracCalc {
 		String stringInput = userInput.nextLine();
 		String printOut = produceAnswer(stringInput);
 		System.out.println(printOut);
+		userInput.close();
 	}
 
 	// ** IMPORTANT ** DO NOT DELETE THIS FUNCTION. This function will be used to
@@ -41,21 +42,28 @@ public class FracCalc {
     
     	//first operand first whole number 
     	String firstWholeNumber = "0";
-    	if (firstUnderscore != -1) {
-    		firstWholeNumber = Input.substring(0, firstUnderscore);
-    	} else {
-    		firstWholeNumber = Input.substring(0, firstSpace);
-    	}
+    	if (firstUnderscore != -1 && firstSlash != -1) {
+    			firstWholeNumber = Input.substring(0, firstUnderscore);
+    		} else if (firstSlash == -1){
+    			firstWholeNumber = Input.substring(0, firstSpace);
+    		} else if(firstUnderscore == -1 && firstSlash != -1) { 
+    			firstWholeNumber = "0";
+    		}
     
     	//first numerator and denominator 
     	String firstNumerator = "0";
     	String firstDenominator = "0";
-    	if (firstSlash != -1) {
+    	if (firstUnderscore != -1 && firstSlash != -1) {
     		firstNumerator = Input.substring(firstUnderscore + 1, firstSlash);
         	firstDenominator = Input.substring(firstSlash + 1, firstSpace);
-    	} 
+    	} else if (firstUnderscore == -1 && firstSlash != -1) {
+    		firstNumerator = Input.substring(0, firstSlash);
+        	firstDenominator = Input.substring(firstSlash + 1, firstSpace); 
+    	} else if (firstSlash == -1){
+    		firstDenominator = "1";
+    	}
     	
-    	String theOperator = Input.substring(firstSpace + 1);
+    	String theOperator = Input.substring(firstSpace + 1, firstSpace + 2);
     	
     	String secondOperand = Input.substring(firstSpace + 3, lastValue);
     	
@@ -63,26 +71,124 @@ public class FracCalc {
     	int secondSlash = secondOperand.indexOf("/");
     	int lastSecondValue = secondOperand.length();
     	
-    	//first whole number 
+    	//second whole number 
     	String secondWholeNumber = "0";
-    	if (secondUnderscore != -1) {
+    	if (secondUnderscore != -1 && secondSlash != -1) {
     		secondWholeNumber = secondOperand.substring(0, secondUnderscore);
     	} else if (secondSlash == -1) {
     		secondWholeNumber = secondOperand.substring(0, lastSecondValue);
-    	}
+    	} else if(secondUnderscore == -1 && secondSlash != -1) { 
+    		secondWholeNumber = "0";
+	}
+    	
     	
     	String secondNumerator = "0"; 
     	String secondDenominator = "0";
-    	if (secondSlash != -1) {
-    		secondNumerator = secondOperand.substring(secondUnderscore +1, secondSlash);
+    	if (secondUnderscore != -1 && secondSlash != -1) {
+    		secondNumerator = secondOperand.substring(secondUnderscore + 1, secondSlash);
     		secondDenominator = secondOperand.substring(secondSlash + 1, lastSecondValue);
-    	} else { 
+    	} else if (secondUnderscore == -1 && secondSlash != -1) { 
+    		secondNumerator = secondOperand.substring(0, secondSlash);
+    		secondDenominator = secondOperand.substring(secondSlash + 1, lastSecondValue);
+		} else if (secondSlash == -1) { 
     		secondDenominator = "1";
     	}
     	
-    	String compiledValue = "whole:" + secondWholeNumber + " numerator:" + secondNumerator + " denominator:" + secondDenominator;
+    	
+    	//parse all to int
+    	int firstIntWhole = Integer.parseInt(firstWholeNumber); 
+    	int secondIntWhole = Integer.parseInt(secondWholeNumber);
+    	
+    	int firstIntDenominator = Integer.parseInt(firstDenominator);
+    	int secondIntDenominator = Integer.parseInt(secondDenominator);
+    	
+    	int firstIntNumerator = Integer.parseInt(firstNumerator);
+    	int secondIntNumerator = Integer.parseInt(secondNumerator); 
+    
+    	
+    	//make into mixed fractions
+    	int firstMixNum = 0; 
+    	int secondMixNum = 0; 
+    	
+    	if (firstIntDenominator != 1 && firstIntWhole > 0) {
+    	 firstMixNum = ((firstIntWhole*firstIntDenominator)+firstIntNumerator);
+    	} 
+    	
+    	if (firstIntDenominator != 1 && firstIntWhole < 0) {
+    		firstMixNum = ((firstIntWhole*firstIntDenominator)-firstIntNumerator);
+    	}
+    	
+    	if (firstIntDenominator == 1) {
+    	firstMixNum = (firstIntWhole);
+    	}
+    	
+    	if (firstIntWhole == 0) { 
+    		firstMixNum = (firstIntNumerator);
+    	}
+    	
+    	if (secondIntDenominator != 1 && secondIntWhole > 0) {
+       	 secondMixNum = ((secondIntDenominator*secondIntWhole)+secondIntNumerator);
+       	} 
+    	
+    	if (secondIntDenominator != 1 && secondIntWhole < 0) {
+       		secondMixNum = ((secondIntWhole*secondIntDenominator)-secondIntNumerator);
+    	}
+       	
+       	if (secondIntDenominator == 1) {
+       	secondMixNum = (secondIntWhole);
+       	}
+       	
+       	if (secondIntWhole == 0) {
+       		secondMixNum = (secondIntNumerator);
+       	}
+       	
+       	int totalDenominator = 0;
+    	int totalNumerator = 0; 
+    	
+    	String compiledValue = "0";
+    	
+    	//addition
+    	if (theOperator.equals("+")) {
+    		totalDenominator = firstIntDenominator * secondIntDenominator; 
+    		totalNumerator = firstMixNum*secondIntDenominator + secondMixNum*firstIntDenominator;
+    	}
+    	
+    	compiledValue = Integer.toString(secondMixNum); 
+    	
+    	//subtraction 
+    	if (theOperator.equals("-")) {
+    			totalNumerator = firstMixNum*secondIntDenominator - secondMixNum*firstIntDenominator;
+    			totalDenominator = secondIntDenominator*firstIntDenominator;
+    		}
+    	
+    	//division 
+    	if (theOperator.equals("/")) {
+    		totalNumerator = firstMixNum*secondIntDenominator;
+    		totalDenominator = firstIntDenominator*secondMixNum;
+    	}
+    	
+    	//multiplication 
+    	if(theOperator.equals("*")) {
+    		totalNumerator = firstMixNum*secondMixNum;
+    		totalDenominator = firstIntDenominator*secondIntDenominator;
+    	}
+       	
+    	if (totalDenominator == 1) {
+    		compiledValue = Integer.toString(totalNumerator);
+    	} else if (totalDenominator == 0) {
+    		compiledValue = "0";
+    	} else {
+    	compiledValue = Integer.toString(totalNumerator) + "/" + Integer.toString(totalDenominator); 
+    	} 
+    	
     	return compiledValue;
-	}
+    	
+    	}
+    	
+    
+    	
+
+
 }
 
 // TODO: Fill in the space below with any helper methods that you think you will
