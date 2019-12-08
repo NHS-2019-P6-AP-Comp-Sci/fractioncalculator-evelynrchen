@@ -199,7 +199,6 @@ public class FracCalc {
 		int totalWhole = (totalNumerator / totalDenominator);
 		totalNumerator = totalNumerator - totalWhole * totalDenominator;
 
-
 		// Reducing fraction
 		if (totalNumerator > totalDenominator) {
 			for (int j = totalNumerator; j > 0; j--) {
@@ -220,13 +219,13 @@ public class FracCalc {
 				}
 			}
 		}
-		
-		if (totalNumerator%3 == 0 && totalDenominator%3 == 0) {
-			totalNumerator = totalNumerator/3;
-			totalDenominator = totalDenominator/3;
+
+		if (totalNumerator % 3 == 0 && totalDenominator % 3 == 0) {
+			totalNumerator = totalNumerator / 3;
+			totalDenominator = totalDenominator / 3;
 		}
-		
-		//Simplication of just whole numbers
+
+		// Simplication of just whole numbers
 		if (totalNumerator == 0 || totalDenominator == 0) {
 			compiledValue = Integer.toString(totalWhole);
 		}
@@ -235,7 +234,7 @@ public class FracCalc {
 		int absDenom = Math.abs(totalDenominator);
 		int absNum = Math.abs(totalNumerator);
 
-		//Compiling final string with the proper notation
+		// Compiling final string with the proper notation
 		if (totalWhole == 0) {
 			if (totalNumerator < 0 && totalDenominator > 0) {
 				compiledValue = Integer.toString(totalNumerator) + "/" + Integer.toString(absDenom);
@@ -264,7 +263,7 @@ public class FracCalc {
 						+ Integer.toString(absDenom);
 			}
 
-		} 
+		}
 
 		return compiledValue;
 
